@@ -53,87 +53,17 @@ main(int argc, char *argv[])
   snprintf(buf, sizeof buf, "%s%s%s", cpuFile, cid, "/cpuacct.stat");
   fileRead(buf);
 
-  snprintf(buf, sizeof buf, "%s%s%s", blkioFile, argv[1], "/blkio.io_serviced");
+  snprintf(buf, sizeof buf, "%s%s%s", blkioFile, cid, "/blkio.io_serviced");
   fileRead(buf);
 
-/*
-  fd = fopen(buf, "rb");
-  if (!fd) {
-    errExit("open");
-  }
-  char contents1[2048];
+  snprintf(buf, sizeof buf, "%s%s%s", blkioFile, cid, "/blkio.io_queued");
+  fileRead(buf);
 
-  while (fgets(contents1, 300, (FILE*)fd) != NULL ) {
-    printf("cpu %s\n", contents1 );
-  }
+  snprintf(buf, sizeof buf, "%s%s%s", blkioFile, cid, "/blkio.io_service_bytes");
+  fileRead(buf);
 
-  fclose(fd);
-
-  char contents2[1024];
-  buf[0] = 0;
-  snprintf(buf, sizeof buf, "%s%s%s", blkioFile, argv[1], "/blkio.io_serviced");
-
-  
-  fd = fopen(buf, "rb");
-  if (!fd) {
-    errExit("open");
-  }
-
-  while (fgets(contents2, 300, (FILE*)fd) != NULL ) {
-    printf("blkio %s\n", contents2 );
-  }
-
-  fclose(fd);
-
-  char contents3[1024];
-  buf[0] = 0;
-  snprintf(buf, sizeof buf, "%s%s%s", blkioFile, argv[1], "/blkio.io_queued");
-
-  
-  fd = fopen(buf, "rb");
-  if (!fd) {
-    errExit("open");
-  }
-
-  while (fgets(contents3, 300, (FILE*)fd) != NULL ) {
-    printf("blkio %s\n", contents3 );
-  }
-
-  fclose(fd);
-
-  char contents4[1024];
-  buf[0] = 0;
-  snprintf(buf, sizeof buf, "%s%s%s", blkioFile, argv[1], "/blkio.io_service_bytes");
-
-  fd = fopen(buf, "rb");
-  if (!fd) {
-    errExit("open");
-  }
-
-  while (fgets(contents4, 300, (FILE*)fd) != NULL ) {
-    printf("blkio %s\n", contents4 );
-  }
-
-  char contents5[1024];
-  buf[0] = 0;
-  snprintf(buf, sizeof buf, "%s%s%s", blkioFile, argv[1], "/blkio.sectors");
-
-  fd = fopen(buf, "rb");
-  if (!fd) {
-    errExit("open");
-  }
-
-  while (fgets(contents5, 300, (FILE*)fd) != NULL ) {
-    printf("blkio %s\n", contents5 );
-  }
-
-
-  fclose(fd);*/
-  //int i;
-  //for (i = 0; i < sizeof iostat; i++) {
-    //printf("gggg %d\n", iostat[i] );
- // }
- 
+  snprintf(buf, sizeof buf, "%s%s%s", blkioFile, cid, "/blkio.io_sectors");
+  fileRead(buf);
 
   return EXIT_SUCCESS;  
 }
