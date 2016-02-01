@@ -11,21 +11,21 @@
 
 /* Read the file and send the contents */
 void
-fileRead(char* fname, char *cid) {
+fileRead(char* buf) {
 
   FILE *fd;
-  char *buf;
+  char *buff = buf;
 
-  snprintf(buf, 100, "%s%s%s", fname, cid, "/memory.stat");
+  //snprintf(buf, 100, "%s%s%s", fname, cid, "/memory.stat");
 
   char contents[100];
-  fd = fopen(buf, "rb");
+  fd = fopen(buff, "rb");
     if (!fd) {
       errExit("open");   
   }
 
   while (fgets(contents, 300, (FILE*)fd) != NULL ) {
-      printf("cpu %s\n", contents );
+      printf(". %s\n", contents );
   }
 
   fclose(fd);
@@ -37,8 +37,8 @@ int
 main(int argc, char *argv[])
 {
   char memFile[50] = "/sys/fs/cgroup/memory/docker/";
-  //char cpuFile[50] = "/sys/fs/cgroup/cpuacct/docker/";
-  //char blkioFile[50] = "/sys/fs/cgroup/blkio/docker/";
+  char cpuFile[50] = "/sys/fs/cgroup/cpuacct/docker/";
+  char blkioFile[50] = "/sys/fs/cgroup/blkio/docker/";
   
   if (argc < 2) {
     fprintf(stderr, "usage %s <long containerid> \n", argv[0]);
@@ -46,10 +46,17 @@ main(int argc, char *argv[])
   }
 
   char *cid = argv[1];
-  fileRead(memFile, cid);
+  char buf[150];
+  snprintf(buf, sizeof buf, "%s%s%s", memFile, cid, "/memory.stat");
+  fileRead(buf);
 
-  /*snprintf(buf, sizeof buf, "%s%s%s", cpuFile, argv[1], "/cpuacct.stat");
+  snprintf(buf, sizeof buf, "%s%s%s", cpuFile, cid, "/cpuacct.stat");
+  fileRead(buf);
 
+  snprintf(buf, sizeof buf, "%s%s%s", blkioFile, argv[1], "/blkio.io_serviced");
+  fileRead(buf);
+
+/*
   fd = fopen(buf, "rb");
   if (!fd) {
     errExit("open");
