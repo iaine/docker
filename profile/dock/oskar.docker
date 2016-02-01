@@ -1,0 +1,3 @@
+RUN apt-get update && \
+    apt-get install -y oskar=2.6.1-1trusty && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
