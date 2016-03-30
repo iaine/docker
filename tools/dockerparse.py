@@ -1,5 +1,12 @@
-import sys
+'''
+   Tool to check Dockerfiles against a set of rules
 
+   @author: Iain emsley <iain.emsley@kellogg.ox.ac.uk>
+'''
+import sys
+'''
+   Definitions
+'''
 #define the allowed subset of commands
 allowed_symbols = ['FROM','RUN','MAINTAINER','LABEL']
 
