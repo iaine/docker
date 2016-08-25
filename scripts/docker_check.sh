@@ -8,6 +8,7 @@
 #
 ###########################
 
+TEMPLATE=$1
 LOGFILE="docker.txt"
 
 echo "cleaning files"
@@ -18,3 +19,5 @@ python ../tools/dockerparse.py
 
 echo "Grabbing system version of Docker and kernel details"
 docker version > docker.txt && uname -a >> docker.txt
+
+docker build -t $TEMPLATE . >> docker.txt
