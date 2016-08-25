@@ -9,15 +9,18 @@
 ###########################
 
 TEMPLATE=$1
-LOGFILE="docker.txt"
+
+NOW=$(date +"%m_%d_%Y")
+
+LOGFILE="${TEMPLATE}_docker_${NOW}.txt"
 
 echo "cleaning files"
-rm -rf $LOGFILE
+rm -rf *.txt
 
 #run parse
 python ../tools/dockerparse.py
 
 echo "Grabbing system version of Docker and kernel details"
-docker version > docker.txt && uname -a >> docker.txt
+docker version > ${LOGFILE} && uname -a >> ${LOGFILE}
 
-docker build -t $TEMPLATE . >> docker.txt
+docker build -t $TEMPLATE . >> ${LOGFILE}
