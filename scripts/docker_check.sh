@@ -3,7 +3,7 @@
 ###########################
 #
 #
-#  Script to run trhe parser
+#  Script to run the parser
 #
 #
 ###########################
@@ -18,9 +18,16 @@ echo "cleaning files"
 rm -rf *.txt
 
 #run parse
-python ../tools/dockerparse.py
+python ../tools/dockerparse.py $TEMPLATE
 
-echo "Grabbing system version of Docker and kernel details"
-docker version > ${LOGFILE} && uname -a >> ${LOGFILE}
 
-docker build -t $TEMPLATE . >> ${LOGFILE}
+# if no error, then build. 
+if [ ! -e "error.txt" ]
+  do 
+    echo "Grabbing system version of Docker and kernel details"
+    docker version > ${LOGFILE} && uname -a >> ${LOGFILE}
+
+    docker build -t $TEMPLATE . >> ${LOGFILE}
+  done
+else
+   print "Error file found. Aborting process."
