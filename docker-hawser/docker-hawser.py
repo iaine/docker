@@ -10,7 +10,7 @@ import sys
    Definitions
 '''
 
-class Hawser():
+class DockerHawser():
     '''
        Main functoin for Hawser
     '''
