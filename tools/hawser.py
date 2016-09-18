@@ -14,7 +14,7 @@ allowed_symbols = ['FROM','RUN','MAINTAINER','LABEL']
 allowed_keywords = ['add-apt-repository', 'apt-get', 'rm']
 
 #allowed keywords for apt
-allowed_apt = ['install', 'upgrade', 'update']
+allowed_apt = ['install', 'update']
 
 #define the atoms
 Symbol = str
@@ -61,7 +61,7 @@ def eval_token(token):
                if split_tok[t] is "apt-get" and \
                    split_tok[t+1] not in allowed_apt:
                        raise Exception("apt-get is incorrectly formed")
-               if split_tok[t+1] is "upgrade" or split_tok[t+1] is "install":
+               if split_tok[t+1] is "install":
                    #check that the upgrade or install is forced
                    if "-y" not in split_tok[t+1:]:
                        raise Exception("apt-get not forced")
