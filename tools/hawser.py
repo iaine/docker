@@ -13,7 +13,7 @@ allowed_symbols = ['FROM','RUN','MAINTAINER','LABEL']
 #allowed keywords for RUN
 allowed_keywords = ['add-apt-repository', 'apt-get', 'rm']
 
-#alloweed keywords for apt
+#allowed keywords for apt
 allowed_apt = ['install', 'upgrade', 'update']
 
 #define the atoms
