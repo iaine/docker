@@ -61,8 +61,16 @@ def eval_token(token):
                if split_tok[t] is "apt-get" and \
                    split_tok[t+1] not in allowed_apt:
                        raise Exception("apt-get is incorrectly formed")
-               if split_tok[t+1] is "upgrade" or split_tok[t+1] is "install" and "-y" not in split_tok[t+1:]:
+               if split_tok[t+1] is "upgrade" or split_tok[t+1] is "install":
+                   #check that the upgrade or install is forced
+                   if "-y" not in split_tok[t+1:]:
                        raise Exception("apt-get not forced")
+                   #the op is forced and op is installed, check the packages
+                   for pkg in split_tok[t+1:].split(' '):
+                       #actually, regex this to check on success
+                       if '=' not in pkg:
+                           raise Exception("Package does not appear to have a version number")
+                       
                #check rm is correct
                if split_tok[t] is "rm":
                    if split_tok[t+1] is not "-r" or split_tok[t+1] is not "-rf":
