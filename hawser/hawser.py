@@ -28,12 +28,12 @@ class Hawser():
     Symbol = str
     Number = float
 
-    def __init__(docker_file):
+    def __init__(self, docker_file):
         self.parse_log = []
         self.errors_log = []
-        self.docker = docker_file
+        self.docker_file = docker_file
 
-    def evaluate():
+    def evaluate(self):
         '''
            Run the evaluation
         '''
@@ -54,7 +54,7 @@ class Hawser():
                 fi.write("\n\n".join(self.errors.log))
             fi.closed()
 
-    def read_from_tokens(tokens):
+    def read_from_tokens(self, tokens):
         '''
            Construct the AST
         '''
@@ -69,14 +69,14 @@ class Hawser():
 
         return ast
 
-    def tokenize(char):
+    def tokenize(self, char):
         '''
          Split file into tokens
          @todo needs work on the spaces
         '''
         return char.replace('\\\n',' ').replace('    ',' ').split('\n')
 
-    def eval_token(token):
+    def eval_token(self, token):
         '''
            Evaluate the tokens
         '''
@@ -110,7 +110,7 @@ class Hawser():
                        if split_tok[t+1] is not "-r" or split_tok[t+1] is not "-rf":
                           self.errors_log.append("RM is not forced. ")
                 
-    def token_rules(token, depth=1):
+    def token_rules(self, token, depth=1):
         '''
            Rules from Dockerfile 
            Check that the keywords are correct
