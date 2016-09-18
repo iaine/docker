@@ -1,7 +1,10 @@
-###Dockerparse
+###Hawser
 
+A hawser is a cable used to anchor a ship. It seems appropriate for a software preservation
+experiment 
+ 
 A research piece of code to check a Dockerfile against 
-rules set up. 
+rules set up.
 
 This is research code to look at the long term sustainability
 of Dockerfiles. 
