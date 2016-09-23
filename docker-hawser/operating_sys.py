@@ -34,3 +34,15 @@ class OS_Environment():
            Get the architecture of the OS
         '''
         return self.uname[4]
+
+class Container_Environment():
+    '''
+       Get the Docker information
+    '''
+
+
+    def get_docker_version():
+        '''
+          Get the Dokcer version
+        '''
+        return '1.12.1'
