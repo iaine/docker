@@ -1,0 +1,12 @@
+<!doctype html>
+<title>Prov</title>
+<link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+<div class=page>
+  <h1>{{ title }}</h1>
+  <table>
+  {% for _,p,o in datarow %}
+    <tr><td> {{ o }} </td> <td> {{ p }}</td></tr>
+  {% endfor %}
+  </table>
+  {% block body %}{% endblock %}
+</div>
