@@ -10,6 +10,7 @@ from rdflib import Namespace, URIRef, Graph
 from rdflib.namespace import RDF, FOAF
 
 #from docker-hawser import OS_Environment, Container_Environment
+from hawser import DockerHawser
 
 g = Graph()
 
@@ -43,9 +44,11 @@ if template is None:
     sys.exit()
 
 #now to add the activities
+dh = DockerHawser(template)
 
 # run the parser
 #p = subprocess('python', "../tools/dockerparse.py template")
+dh.evaluate
 g.add( (URIRef(DOCK.Hawser), PROV.Check , URIRef(DOCK.Dockerfile )) )
 
 # write out the error
