@@ -22,6 +22,11 @@ g.bind("docker", DOCK)
 FRBR = Namespace("http://purl.org/vocab/frbr/core#")
 g.bind("frbr", FRBR)
 
+#set up FRBR Group 1 entities
+g.add( (URIRef(DOCK.Hawser), RDF.subclass , FRBR.Work) )
+g.add( (URIRef(DOCK.Hawser), RDF.subclass , FRBR.Manifestation) )
+g.add( (URIRef(DOCK.Hawser), RDF.subclass , FRBR.Item) )
+
 #add the entities to the graph
 g.add( (URIRef(DOCK.Hawser), RDF.type , PROV.Entity) )
 g.add( (URIRef(DOCK.Dockerfile), RDF.type , PROV.Entity) )
@@ -40,7 +45,8 @@ g.add( (URIRef(DOCK.Version), RDF.type , PROV.Activity) )
 
 template = sys.argv[1]
 if template is None:
-    sys.exit()
+    print ("No file given")
+    sys.exit(0)
 
 #now to add the activities
 
