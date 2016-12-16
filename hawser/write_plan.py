@@ -10,6 +10,7 @@ import re
 from datetime import datetime
 from rdflib import Graph, Namespace, URIRef, Literal, BNode
 from rdflib.namespace import RDF, FOAF
+from pytz import reference
 
 from hawser import DockerHawser
 from operating_sys import OS_Environment
@@ -25,7 +26,7 @@ g = Graph()
 PROV = Namespace("http://www.w3.org/ns/prov#")
 g.bind("prov", PROV)
 
-DOCK = Namespace("http://www.containerprov.org/ns/docker#")
+DOCK = Namespace("http://www.example.org/ns/docker#")
 g.bind("docker", DOCK)
 
 FRBR = Namespace("http://purl.org/vocab/frbr/core#")
@@ -94,14 +95,15 @@ g.add ( (RDF.type, RDF.about, URIRef(DOCK.Dockerfile)) )
 #p = subprocess('python', "../tools/dockerparse.py template")
 DockerHawser(template).evaluate()
 g.add( (URIRef(DOCK.Hawser), PROV.Check , URIRef(DOCK.Dockerfile )) )
-g.add( (URIRef(DOCK.Dockerfile), RDF.resource , URIRef('http://www.example.org/dockerfile#' + str(template + "'_docker.ttl"))) )
+g.add( (DOCK.ContainerID, RDF.resource , URIRef('http://www.example.org/dockerfile#' + str(template + "_docker.ttl"))) )
 
 #set up the time
-g.add( (DOCK.createdAt, a, TIME.Instant) )
-g.add( (DOCK.createdAt, TIME.inDateTime, DOCK.createdAtDescription) )
-g.add( (DOCK.createdAt, TIME.inXSDDateTime, datetime.now().isoformat() ) )
-
-g.add( DOCK.createdAtDescription, a,  )
+dtime = datetime.now()
+localtz = reference.LocalTimezone()
+a = BNode()
+g.add( (DOCK.createdAt, RDF.type, TIME.Instant) )
+g.add( (DOCK.createdAt, TIME.timeZone, Literal(localtz.tzname(dtime)) ) )
+g.add( (DOCK.createdAt, TIME.inXSDDateTime, Literal(dtime.isoformat()) ) )
 
 #set up the maintainer
 with open(template, 'r') as f:
@@ -133,19 +135,24 @@ else:
     
     # build the container
     #p =  subprocess('docker' "build -t template . >> ${LOGFILE}")
-    g.add( (URIRef(DOCK.Build), PROV.used, URIRef(DOCK.Command)) )
-    g.add( (URIRef(DOCK.Build), PROV.used, URIRef(DOCK.OS)) )
-    g.add( (URIRef(DOCK.Build), PROV.used, URIRef(DOCK.Dockerfile)) )
-    g.add( (URIRef(DOCK.Container), PROV.wasGeneratedBy, URIRef(DOCK.Dockerfile)) )
-    g.add( (URIRef(DOCK.OS), DOCK.OSname, Literal(ose.get_os_name())) )
-    g.add( (URIRef(DOCK.OS), DOCK.build, Literal(ose.get_os_build())) )
-    g.add( (URIRef(DOCK.OS), DOCK.kernel, Literal(ose.get_os_kernel())) )
-    g.add( (URIRef(DOCK.OS), DOCK.architecture, Literal(ose.get_os_arch())) )
-    g.add( (URIRef(DOCK.Create), DOCK.dockerversion, Literal(ce.get_docker_version())) )
+    g.add( (DOCK.Build, PROV.used, DOCK.Command) )
+    g.add( (DOCK.Build, PROV.used, DOCK.OS) )
+    g.add( (DOCK.Build, PROV.used, DOCK.Dockerfile) )
+    g.add( (DOCK.Container, PROV.wasGeneratedBy, DOCK.Dockerfile) )
+    g.add( (DOCK.OS, DOCK.OSname, Literal(ose.get_os_name())) )
+    g.add( (DOCK.OS, DOCK.build, Literal(ose.get_os_build())) )
+    g.add( (DOCK.OS, DOCK.kernel, Literal(ose.get_os_kernel())) )
+    g.add( (DOCK.OS, DOCK.architecture, Literal(ose.get_os_arch())) )
+    g.add( (DOCK.Create, DOCK.dockerversion, Literal(ce.get_docker_version())) )
 
+    host = "http://127.0.0.1:5000/" + str(container_temp) + ":" + str(container_version)
     #tag the container
-    #p =  subprocess('docker' "build -t template . >> ${LOGFILE}")
-    g.add( (URIRef(DOCK.Tag), PROV.used, URIRef(DOCK.Command)) )
-    g.add( (URIRef(DOCK.ContainerID), PROV.wasGeneratedBy, URIRef(DOCK.Container)) )
+    #p =  subprocess(['docker',"tag " + str(container_temp) + " " + host])
+    g.add( (DOCK.Tag, PROV.used, DOCK.Command) )
+    g.add( (DOCK.ContainerID, PROV.wasGeneratedBy, DOCK.Container) )
+
+    #p =  subprocess(['docker',"push " + host])
+    g.add( (DOCK.Push, PROV.used, DOCK.Command) )
+    
 
 g.serialize(destination=template + '_plan.xml', format='xml')
