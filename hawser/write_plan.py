@@ -7,6 +7,7 @@ import sys
 import os
 import re
 
+from datetime import datetime
 from rdflib import Graph, Namespace, URIRef, Literal, BNode
 from rdflib.namespace import RDF, FOAF
 
@@ -18,6 +19,8 @@ from container import Container_Environment
 ose = OS_Environment()
 ce = Container_Environment()
 g = Graph()
+
+#namespaces and binding
 
 PROV = Namespace("http://www.w3.org/ns/prov#")
 g.bind("prov", PROV)
@@ -36,6 +39,9 @@ g.bind("rdf", RDF)
 
 OWL = Namespace("http://www.w3.org/2002/07/owl#")
 g.bind("owl", OWL)
+
+TIME = Namespace("http://www.w3.org/2006/time#")
+g.bind("time", TIME)
 
 g.bind("foaf", FOAF)
 
@@ -89,8 +95,15 @@ g.add ( (RDF.type, RDF.about, URIRef(DOCK.Dockerfile)) )
 DockerHawser(template).evaluate()
 g.add( (URIRef(DOCK.Hawser), PROV.Check , URIRef(DOCK.Dockerfile )) )
 g.add( (URIRef(DOCK.Dockerfile), RDF.resource , URIRef('http://www.example.org/dockerfile#' + str(template + "'_docker.ttl"))) )
-#set up the maintainer
 
+#set up the time
+g.add( (DOCK.createdAt, a, TIME.Instant) )
+g.add( (DOCK.createdAt, TIME.inDateTime, DOCK.createdAtDescription) )
+g.add( (DOCK.createdAt, TIME.inXSDDateTime, datetime.now().isoformat() ) )
+
+g.add( DOCK.createdAtDescription, a,  )
+
+#set up the maintainer
 with open(template, 'r') as f:
     maintainer = re.search('(?<=MAINTAINER).*', f.read())
     maintain = str(maintainer.group(0)).strip().split()
