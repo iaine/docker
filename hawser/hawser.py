@@ -79,6 +79,7 @@ class DockerHawser():
         g = Graph()
         DOCK = Namespace("http://www.example.org/ns/dockerfile#")
         g.bind("docker", DOCK)
+        g.bind("foaf", FOAF)
         dock = URIRef(DOCK.dockerfile)
         g.add( (dock, RDF.type , Literal(self.docker_file) ) )
 
@@ -126,7 +127,7 @@ class DockerHawser():
                                 #if '=' not in pkg:
                                 #    self.errors_log.append("Package does not appear to have a version number")
                                 if pkg[0][0].isalpha() and pkg[0] != "rm":
-                                    g.add( ( dock , DOCK.package , Literal(str(pkg[0])) ) )
+                                    g.add( ( dock , DOCK.package , URIRef(str(pkg[0]).replace('=','/')) ) )
 
                         #check rm is correct
                         if split_tok[t] is "rm":
