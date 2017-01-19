@@ -15,13 +15,16 @@ from pytz import reference
 from hawser import DockerHawser
 from operating_sys import OS_Environment
 from container import Container_Environment
-
+from parse_kliko import parse_kliko
 
 ose = OS_Environment()
 ce = Container_Environment()
 g = Graph()
+pk = parse_kliko('kliko.yml')
 
 #namespaces and binding
+KLIKO = Namespace("http://www.example.org/ns/kliko#")
+g.bind("kliko", KLIKO)
 
 PROV = Namespace("http://www.w3.org/ns/prov#")
 g.bind("prov", PROV)
@@ -45,6 +48,16 @@ TIME = Namespace("http://www.w3.org/2006/time#")
 g.bind("time", TIME)
 
 g.bind("foaf", FOAF)
+
+
+template = sys.argv[1]
+container_temp = sys.argv[2]
+container_version = sys.argv[3]
+
+if template is None:
+    print ("No file given")
+    sys.exit(0)
+
 
 #set up FRBR Group 1 entities
 g.add( (URIRef(DOCK.ContainerID), RDFS.subClassOf , FRBR.Work) )
@@ -74,13 +87,6 @@ g.add( (URIRef(DOCK.Check), RDF.type , PROV.Activity) )
 g.add( (URIRef(DOCK.Extraction), RDF.type , PROV.Activity) )
 g.add( (URIRef(DOCK.Create), RDF.type , PROV.Activity) )
 g.add( (URIRef(DOCK.Version), RDF.type , PROV.Activity) )
-
-template = sys.argv[1]
-container_temp = sys.argv[2]
-container_version = sys.argv[3]
-if template is None:
-    print ("No file given")
-    sys.exit(0)
 
 g.add ( (RDF.type, RDF.about, URIRef(DOCK.Dockerfile)) )
 #add the 'bibliographic' parts of the process
@@ -129,7 +135,7 @@ else:
     g.add( (URIRef(DOCK.Kernel), PROV.used, URIRef(DOCK.Extraction)) )
     
     # build the container
-    p =  subprocess.check_output(['docker',"build -t template ."])
+    #p =  subprocess.check_output(['docker'," build -t " + container_temp + " ."])
     g.add( (DOCK.Build, PROV.used, DOCK.Command) )
     g.add( (DOCK.Build, PROV.used, DOCK.OS) )
     g.add( (DOCK.Build, PROV.used, DOCK.Dockerfile) )
@@ -142,14 +148,15 @@ else:
 
     host = "http://127.0.0.1:5000/" + str(container_temp) + ":" + str(container_version)
     #tag the container
-    p =  subprocess.check_output(['docker',"tag " + str(container_temp) + " " + host])
+    #p =  subprocess.check_output(['docker',"tag " + str(container_temp) + " " + host])
     g.add( (DOCK.Tag, PROV.used, DOCK.Command) )
     g.add( (DOCK.ContainerID, PROV.wasGeneratedBy, DOCK.Container) )
 
 
     g.add( (DOCK.Push, PROV.used, DOCK.Command) )
     #link to a Kliko file
-    g.add( KLIKO.file, RDF.resource, URIRef('http://www.example.org/kliko#' + str("kliko_kliko.ttl")) )
-    g.add( KLIKO.file, PROV.used, DOCK.container)
+    pk.parse_kliko_file()
+    g.add( (KLIKO.file, RDF.resource, URIRef('http://www.example.org/kliko#' + str("kliko_kliko.xml")) ) )
+    g.add( (KLIKO.file, PROV.used, DOCK.container))
 
 g.serialize(destination=template + '_plan.xml', format='xml')
