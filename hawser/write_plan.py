@@ -91,8 +91,8 @@ g.add( (URIRef(DOCK.ContainerID), PROV.wasGeneratedBy, URIRef(DOCK.Container)) )
 #now to add the activities
 
 g.add ( (RDF.type, RDF.about, URIRef(DOCK.Dockerfile)) )
+
 # run the parser
-#p = subprocess('python', "../tools/dockerparse.py template")
 DockerHawser(template).evaluate()
 g.add( (URIRef(DOCK.Hawser), PROV.Check , URIRef(DOCK.Dockerfile )) )
 g.add( (DOCK.ContainerID, RDF.resource , URIRef('http://www.example.org/dockerfile#' + str(template + "_docker.ttl"))) )
@@ -100,7 +100,7 @@ g.add( (DOCK.ContainerID, RDF.resource , URIRef('http://www.example.org/dockerfi
 #set up the time
 dtime = datetime.now()
 localtz = reference.LocalTimezone()
-a = BNode()
+
 g.add( (DOCK.createdAt, RDF.type, TIME.Instant) )
 g.add( (DOCK.createdAt, TIME.timeZone, Literal(localtz.tzname(dtime)) ) )
 g.add( (DOCK.createdAt, TIME.inXSDDateTime, Literal(dtime.isoformat()) ) )
@@ -124,17 +124,12 @@ g.add( (DOCK.Container, PROV.uses, DOCK.Organisation ) )
 if os.path.isfile('error.txt'):
     g.add( (URIRef(DOCK.Command), PROV.Create , URIRef(DOCK.ErrorFile )) )
 else:
-
-    # extract OS details
-    #p = subprocess('python', "../tools/dockerparse.py template")
-    
+   
     g.add( (URIRef(DOCK.OS), PROV.used, URIRef(DOCK.Extraction)) )
-    # extract Ubuntu details
-    #p = subprocess('python', "-a")
     g.add( (URIRef(DOCK.Kernel), PROV.used, URIRef(DOCK.Extraction)) )
     
     # build the container
-    #p =  subprocess('docker' "build -t template . >> ${LOGFILE}")
+    p =  subprocess.check_output(['docker',"build -t template . >> ${LOGFILE}"])
     g.add( (DOCK.Build, PROV.used, DOCK.Command) )
     g.add( (DOCK.Build, PROV.used, DOCK.OS) )
     g.add( (DOCK.Build, PROV.used, DOCK.Dockerfile) )
@@ -147,7 +142,7 @@ else:
 
     host = "http://127.0.0.1:5000/" + str(container_temp) + ":" + str(container_version)
     #tag the container
-    #p =  subprocess(['docker',"tag " + str(container_temp) + " " + host])
+    p =  subprocess.check_output(['docker',"tag " + str(container_temp) + " " + host])
     g.add( (DOCK.Tag, PROV.used, DOCK.Command) )
     g.add( (DOCK.ContainerID, PROV.wasGeneratedBy, DOCK.Container) )
 
