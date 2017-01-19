@@ -129,7 +129,7 @@ else:
     g.add( (URIRef(DOCK.Kernel), PROV.used, URIRef(DOCK.Extraction)) )
     
     # build the container
-    p =  subprocess.check_output(['docker',"build -t template . >> ${LOGFILE}"])
+    p =  subprocess.check_output(['docker',"build -t template ."])
     g.add( (DOCK.Build, PROV.used, DOCK.Command) )
     g.add( (DOCK.Build, PROV.used, DOCK.OS) )
     g.add( (DOCK.Build, PROV.used, DOCK.Dockerfile) )
@@ -146,8 +146,10 @@ else:
     g.add( (DOCK.Tag, PROV.used, DOCK.Command) )
     g.add( (DOCK.ContainerID, PROV.wasGeneratedBy, DOCK.Container) )
 
-    #p =  subprocess(['docker',"push " + host])
+
     g.add( (DOCK.Push, PROV.used, DOCK.Command) )
-    
+    #link to a Kliko file
+    g.add( KLIKO.file, RDF.resource, URIRef('http://www.example.org/kliko#' + str("kliko_kliko.ttl")) )
+    g.add( KLIKO.file, PROV.used, DOCK.container)
 
 g.serialize(destination=template + '_plan.xml', format='xml')
