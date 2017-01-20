@@ -164,4 +164,4 @@ else:
     g.add( (KLIKO.file, PROV.used, DOCK.Container ) )
 
 
-g.serialize(destination=template + '_plan.xml', format='xml')
+g.serialize(destination=template + '_plan.ttl', format='ttl')
