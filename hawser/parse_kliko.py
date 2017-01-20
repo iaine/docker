@@ -44,4 +44,4 @@ class parse_kliko():
                 self.g.add( (URIRef(field['name']), KLIKO.parameter , Literal(field['name']) ) )
                 self.g.add( (URIRef(field['name']), KLIKO.parameter , Literal(field['initial']) ) )
                 self.g.add( (URIRef(field['name']), KLIKO.parameter , Literal(field['type']) ) )
-        self.g.serialize(destination=self.kliko + '_kliko.xml', format='xml')
+        self.g.serialize(destination=self.kliko + '_kliko.ttl', format='ttl')
