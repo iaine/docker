@@ -2,6 +2,8 @@
    Writing the plan for the Provenance
 '''
 
+__version__ = "0.1"
+
 import subprocess
 import sys
 import os
@@ -65,8 +67,8 @@ g.add( (URIRef(DOCK.Dockerfile), RDFS.subClassOf , FRBR.Manifestation) )
 g.add( (URIRef(DOCK.Container), RDFS.subClassOf , FRBR.Item) )
 
 #set up FRBR group 2 entities
-g.add( (URIRef(DOCK.Maintainer), RDFS.subClassOf , FRBR.Person) )
-g.add( (URIRef(DOCK.Organisation), RDFS.subClassOf , FRBR.CorporateBody) )
+g.add( (DOCK.Maintainer, RDFS.subClassOf , FRBR.Person) )
+g.add( (DOCK.Organisation, RDFS.subClassOf , FRBR.CorporateBody) )
 
 #create orgnaisation
 g.add( (DOCK.Organisation, RDF.about, Literal('Square Kilometre Array') ) )
@@ -92,10 +94,10 @@ g.add ( (RDF.type, RDF.about, URIRef(DOCK.Dockerfile)) )
 #add the 'bibliographic' parts of the process
 g.add( (URIRef(DOCK.Dockerfile), DOCK.Dockerfile , Literal(template) ) )
 g.add( (URIRef(DOCK.Container), DOCK.Container , Literal(container_temp) ) )
-g.add( (URIRef(DOCK.ContainerID), DOCK.Dockerfile , Literal(str(container_temp) + ":" + str(container_version)) ) )
-g.add( (URIRef(DOCK.ContainerID), PROV.wasGeneratedBy, URIRef(DOCK.Container)) )
+g.add( (Literal(str(container_temp) + ":" + str(container_version)), RDF.type, DOCK.containerID ) )
+g.add( (DOCK.ContainerID, DOCK.Dockerfile , Literal(str(container_temp) + ":" + str(container_version)) ) )
+g.add( (DOCK.Container, PROV.used, DOCK.ContainerID) )
 #now to add the activities
-
 g.add ( (RDF.type, RDF.about, URIRef(DOCK.Dockerfile)) )
 
 # run the parser
@@ -106,7 +108,7 @@ g.add( (DOCK.ContainerID, RDF.resource , URIRef('http://www.example.org/dockerfi
 #set up the time
 dtime = datetime.now()
 localtz = reference.LocalTimezone()
-
+g.add( (DOCK.Container, DOCK.container, DOCK.createdAt) )
 g.add( (DOCK.createdAt, RDF.type, TIME.Instant) )
 g.add( (DOCK.createdAt, TIME.timeZone, Literal(localtz.tzname(dtime)) ) )
 g.add( (DOCK.createdAt, TIME.inXSDDateTime, Literal(dtime.isoformat()) ) )
@@ -116,6 +118,7 @@ with open(template, 'r') as f:
     maintainer = re.search('(?<=MAINTAINER).*', f.read())
     maintain = str(maintainer.group(0)).strip().split()
     m = URIRef("http://example.org/people/" + str(maintain[0]))
+    g.add ( (m, RDF.type, DOCK.Maintainer) )
     g.add ( (DOCK.Maintainer, RDF.about, m) )
     g.add( (m, RDF.type, FOAF.Person) )
     #g.add( (m, RDF.resource, DOCK.Maintainer ) )
@@ -139,9 +142,10 @@ else:
     g.add( (DOCK.Build, PROV.used, DOCK.Command) )
     g.add( (DOCK.Build, PROV.used, DOCK.OS) )
     g.add( (DOCK.Build, PROV.used, DOCK.Dockerfile) )
-    g.add( (DOCK.Container, PROV.wasGeneratedBy, DOCK.Dockerfile) )
+    g.add( (DOCK.Container, PROV.used, DOCK.Dockerfile) )
+    g.add( (DOCK.Container, PROV.wasGeneratedBy, DOCK.Build) )
     g.add( (DOCK.OS, DOCK.OSname, Literal(ose.get_os_name())) )
-    g.add( (DOCK.OS, DOCK.build, Literal(ose.get_os_build())) )
+    g.add( (DOCK.OS, DOCK.Build, Literal(ose.get_os_build())) )
     g.add( (DOCK.OS, DOCK.kernel, Literal(ose.get_os_kernel())) )
     g.add( (DOCK.OS, DOCK.architecture, Literal(ose.get_os_arch())) )
     g.add( (DOCK.Create, DOCK.dockerversion, Literal(ce.get_docker_version())) )
@@ -156,7 +160,8 @@ else:
     g.add( (DOCK.Push, PROV.used, DOCK.Command) )
     #link to a Kliko file
     pk.parse_kliko_file()
-    g.add( (KLIKO.file, RDF.resource, URIRef('http://www.example.org/kliko#' + str("kliko_kliko.xml")) ) )
-    g.add( (KLIKO.file, PROV.used, DOCK.container))
+    g.add( (KLIKO.file, RDF.resource, URIRef('http://www.example.org/kliko#' + str("kliko.yml_kliko.xml")) ) )
+    g.add( (KLIKO.file, PROV.used, DOCK.Container ) )
+
 
 g.serialize(destination=template + '_plan.xml', format='xml')
