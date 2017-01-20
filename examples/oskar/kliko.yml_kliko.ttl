@@ -1,0 +1,46 @@
+@prefix kliko: <http://www.example.org/ns/kliko#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<addnoise> a kliko:parameter ;
+    kliko:parameter true,
+        "addnoise",
+        "bool" .
+
+<kliko.yml> rdfs:type kliko:file .
+
+<parameters> a kliko:section .
+
+<pbeam> a kliko:parameter ;
+    kliko:parameter false,
+        "bool",
+        "pbeam" .
+
+<reciever_gains> a kliko:parameter ;
+    kliko:parameter false,
+        "bool",
+        "reciever_gains" .
+
+<sefd> a kliko:parameter ;
+    kliko:parameter 831,
+        "int",
+        "sefd" .
+
+<skymodel> a kliko:parameter ;
+    kliko:parameter "s-cubed_1deg_400uJy.lsm.html",
+        "skymodel",
+        "str" .
+
+kliko:file kliko:io "split" ;
+    kliko:name "meqtrees-pipeliner" ;
+    kliko:schema <https://github.com/gijzelaerr/kliko/tree/master/examples/simulator>,
+        3 ;
+    rdfs:description "Simulates visabilites into a simulated measurement set" .
+
+kliko:section kliko:file kliko:file ;
+    rdfs:description "simulator paramaters" .
+
+kliko:parameter kliko:file kliko:section .
+

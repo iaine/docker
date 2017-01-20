@@ -1,0 +1,87 @@
+@prefix docker: <http://www.example.org/ns/docker#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix frbr: <http://purl.org/vocab/frbr/core#> .
+@prefix kliko: <http://www.example.org/ns/kliko#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix time: <http://www.w3.org/2006/time#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+docker:Check a prov:Activity .
+
+docker:Create a prov:Activity ;
+    docker:dockerversion "1.13.0" .
+
+docker:ErrorFile a prov:Entity .
+
+docker:Hawser a prov:Entity ;
+    prov:Check docker:Dockerfile .
+
+docker:Kernel a prov:Entity ;
+    prov:used docker:Extraction .
+
+docker:Push prov:used docker:Command .
+
+docker:Tag a prov:Entity ;
+    prov:used docker:Command .
+
+docker:Version a prov:Activity .
+
+kliko:file rdf:resource <http://www.example.org/kliko#kliko.yml_kliko.xml> ;
+    prov:used docker:Container .
+
+rdf:type rdf:about docker:Dockerfile .
+
+<http://example.org/people/Iain> a docker:Maintainer,
+        foaf:Person ;
+    docker:maintains docker:Dockerfile ;
+    foaf:mbox "iain@example.org" ;
+    foaf:name "Iain Emsley" .
+
+docker:Build a prov:Entity ;
+    prov:used docker:Command,
+        docker:Dockerfile,
+        docker:OS .
+
+docker:ContainerID docker:Dockerfile "temp:0.1" ;
+    rdf:resource <http://www.example.org/dockerfile#Dockerfile_docker.ttl> ;
+    rdfs:subClassOf frbr:Work ;
+    prov:wasGeneratedBy docker:Container .
+
+docker:Maintainer rdf:about <http://example.org/people/Iain> ;
+    rdfs:subClassOf frbr:Person .
+
+docker:OS a prov:Entity ;
+    docker:Build "#154-Ubuntu SMP Tue Dec 20 09:57:27 UTC 2016" ;
+    docker:OSname "Linux" ;
+    docker:architecture "x86_64" ;
+    docker:kernel "3.13.0-107-generic" ;
+    prov:used docker:Extraction .
+
+docker:Organisation rdf:about "Square Kilometre Array" ;
+    rdfs:subClassOf frbr:CorporateBody .
+
+docker:createdAt a time:Instant ;
+    time:inXSDDateTime "2017-01-20T15:10:32.773009" ;
+    time:timeZone "GMT" .
+
+"temp:0.1" a docker:containerID .
+
+docker:Container a prov:Entity ;
+    docker:Container "temp" ;
+    docker:container docker:createdAt ;
+    rdfs:subClassOf frbr:Item ;
+    prov:used docker:ContainerID,
+        docker:Dockerfile ;
+    prov:uses docker:Organisation ;
+    prov:wasGeneratedBy docker:Build .
+
+docker:Extraction a prov:Activity .
+
+docker:Dockerfile a prov:Entity ;
+    docker:Dockerfile "Dockerfile" ;
+    rdfs:subClassOf frbr:Manifestation .
+

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+   xmlns:docker="http://www.example.org/ns/dockerfile#"
+   xmlns:foaf="http://xmlns.com/foaf/0.1/"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+>
+  <rdf:Description rdf:about="http://www.example.org/ns/dockerfile#dockerfile">
+    <docker:osversion>14.04</docker:osversion>
+    <rdf:type>Dockerfile</rdf:type>
+    <foaf:name>Iain Emsley</foaf:name>
+    <docker:osname>ubuntu</docker:osname>
+    <docker:package rdf:resource="oskar/2.6.1-1trusty"/>
+    <docker:package rdf:resource="software-properties-common"/>
+    <foaf:mbox>iain@example.org</foaf:mbox>
+    <docker:package rdf:resource="python-software-properties"/>
+  </rdf:Description>
+</rdf:RDF>
